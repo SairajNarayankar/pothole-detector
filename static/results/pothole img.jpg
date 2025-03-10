@@ -1,0 +1,1 @@
+{'inference_id': 'ab500204-0807-43a7-bd0e-9e020cddeb0e', 'time': 0.054134450000674406, 'image': {'width': 474, 'height': 315}, 'predictions': [{'x': 234.0, 'y': 253.0, 'width': 220.0, 'height': 90.0, 'confidence': 0.8540952801704407, 'class': 'pothole', 'class_id': 0, 'detection_id': '32b307ed-c830-4ffa-a547-1b67d9f7cf34'}]}

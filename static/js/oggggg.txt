@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pothole Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Pothole Detection</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name="file" id="fileInput" accept="image/*">
+            <button type="button" onclick="uploadImage()">Detect Potholes</button>
+        </form>
+        <div id="result">
+            <h2>Detection Result</h2>
+            <div id="imageContainer" style="position: relative;">
+                <img id="resultImage" src="#" alt="Result Image" style="max-width: 100%; display: none;">
+                <canvas id="boundingBoxCanvas" style="position: absolute; top: 0; left: 0;"></canvas>
+            </div>
+            <pre id="resultText"></pre>
+        </div>
+    </div>
+    <script>
+        async function uploadImage() {
+            const fileInput = document.getElementById('fileInput');
+            const resultText = document.getElementById('resultText');
+            const resultImage = document.getElementById('resultImage');
+            const boundingBoxCanvas = document.getElementById('boundingBoxCanvas');
+            const imageContainer = document.getElementById('imageContainer');
+
+            if (!fileInput.files[0]) {
+                alert('Please select an image');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/detect', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.error) {
+                    resultText.innerHTML = `<span style="color: red;">Error: ${data.error}</span>`;
+                } else if (data.result.length === 0) {
+                    resultText.innerHTML = `<span style="color: orange;">No potholes detected</span>`;
+                } else {
+                    resultText.innerHTML = JSON.stringify(data.result, null, 2);
+                    resultImage.src = data.image_url;
+                    resultImage.style.display = 'block';
+
+                    // Draw bounding boxes
+                    const img = new Image();
+                    img.src = data.image_url;
+                    img.onload = () => {
+                        const scaleX = img.width / resultImage.width;
+                        const scaleY = img.height / resultImage.height;
+
+                        boundingBoxCanvas.width = resultImage.width;
+                        boundingBoxCanvas.height = resultImage.height;
+                        const ctx = boundingBoxCanvas.getContext('2d');
+
+                        data.result.forEach(prediction => {
+                            const { x, y, width, height } = prediction;
+
+                            // Convert center-based coordinates to top-left corner coordinates
+                            const topLeftX = (x - width / 2) / scaleX;
+                            const topLeftY = (y - height / 2) / scaleY;
+                            const scaledWidth = width / scaleX;
+                            const scaledHeight = height / scaleY;
+
+                            // Draw the bounding box
+                            ctx.strokeStyle = 'red';
+                            ctx.lineWidth = 2;
+                            ctx.strokeRect(topLeftX, topLeftY, scaledWidth, scaledHeight);
+                        });
+                    };
+                }
+            } catch (error) {
+                resultText.innerHTML = `<span style="color: red;">Error: ${error.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
