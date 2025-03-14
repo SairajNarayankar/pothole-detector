@@ -1,6 +1,3 @@
-# pothole-detector
-THIS IS MY LAST YEAR BSCIT PROJECT 
-
 # Pothole Detector
 
 THIS IS MY LAST YEAR BSCIT PROJECT
