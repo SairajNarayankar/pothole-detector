@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pothole Detection</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -21,9 +22,9 @@
         </form>
         <div id="result">
             <h2>Detection Result</h2>
-            <div id="imageContainer" style="position: relative;">
-                <img id="resultImage" src="#" alt="Result Image" style="max-width: 100%; display: none;">
-                <canvas id="boundingBoxCanvas" style="position: absolute; top: 0; left: 0;"></canvas>
+            <div id="imageContainer">
+                <img id="resultImage" src="#" alt="Result Image">
+                <canvas id="boundingBoxCanvas"></canvas>
             </div>
             <pre id="resultText"></pre>
         </div>
@@ -52,9 +53,9 @@
                 const data = await response.json();
 
                 if (data.error) {
-                    resultText.innerHTML = `<span style="color: red;">Error: ${data.error}</span>`;
+                    resultText.innerHTML = `<span style="color: #ff0077;">Error: ${data.error}</span>`;
                 } else if (data.result.length === 0) {
-                    resultText.innerHTML = `<span style="color: orange;">No potholes detected</span>`;
+                    resultText.innerHTML = `<span style="color: #ff0077;">No potholes detected</span>`;
                 } else {
                     resultText.innerHTML = JSON.stringify(data.result, null, 2);
                     resultImage.src = data.image_url;
@@ -81,14 +82,14 @@
                             const scaledHeight = height / scaleY;
 
                             // Draw the bounding box
-                            ctx.strokeStyle = 'red';
+                            ctx.strokeStyle = '#ff0077'; /* Neon pink */
                             ctx.lineWidth = 2;
                             ctx.strokeRect(topLeftX, topLeftY, scaledWidth, scaledHeight);
                         });
                     };
                 }
             } catch (error) {
-                resultText.innerHTML = `<span style="color: red;">Error: ${error.message}</span>`;
+                resultText.innerHTML = `<span style="color: #ff0077;">Error: ${error.message}</span>`;
             }
         }
     </script>
