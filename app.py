@@ -39,7 +39,7 @@ def detect():
 
     # Perform inference using Roboflow
     try:
-        result = CLIENT.infer(file_path, model_id="pothole-detection-2-28w0d/1")
+        result = CLIENT.infer(file_path, model_id="pothole-detection-2-28w0d-jhz5n/1")
         print("Raw Roboflow Response:", result)  # Log the raw response for debugging
     except Exception as e:
         return jsonify({'error': f'Inference failed: {str(e)}'}), 500
